@@ -98,7 +98,7 @@ exports.deleteMe = catchAsync(async (req,res,next)=>{
 });
 
 // Admin or Staff search for a specific student 
-exports.getStudent = catchAsync(async (req,res,next)=>{
+exports.getUser = catchAsync(async (req,res,next)=>{
 
     res.status(500).json({
         status : 'error',
@@ -107,7 +107,7 @@ exports.getStudent = catchAsync(async (req,res,next)=>{
 });
 
 // The admin creates a user profile 
-exports.createStudent = catchAsync(async (req,res,next)=>{
+exports.createUser = catchAsync(async (req,res,next)=>{
     res.status(500).json({
         status : 'error',
         message : 'This route is not yet defined'

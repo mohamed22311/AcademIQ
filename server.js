@@ -10,22 +10,32 @@ process.on("uncaughtException", (err) => {
 dotenv.config({ path: "./config.env" });
 const app = require("./app");
 
-const UserModel = require('./models/userModel');
-const courseModel = require('./models/courseModel');
-const EnrollmentModel = require('./models/enrollmentModel');
-const semesterModel = require('./models/semesterModel');
-const GradeModel = require('./models/gradeModel');
+// const database = new Database();
 
+// // Correct order in the example
+// const User = require('./models/userModel');
+// const Enrollment = require('./models/enrollmentModel');
+// const Grade = require('./models/gradeModel');
+// const Course = require('./models/courseModel');
+// const Semester = require('./models/semesterModel');
 
-const Database = require('./utils/database');
+// async function startServer() {
+//     await database.authenticate();
+//     database.syncModels(User, Enrollment, Grade,Course,Semester);
+// }
+// startServer();
 
-const database = new Database();
-async function startServer() {
-    await database.authenticate();
-    database.syncModels(UserModel, EnrollmentModel, GradeModel,courseModel,semesterModel);
-}
-startServer();
+const sequelize = require("./utils/database");
+const UserModel = require("./models/userModel");
 
+sequelize
+  .sync({ alter: true })
+  .then((results) => {
+    console.log("DB connected");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 const port = process.env.PORT || 3000;
 const server = app.listen(port, ()=>{

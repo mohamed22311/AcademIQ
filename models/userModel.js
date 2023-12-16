@@ -1,6 +1,5 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const bcrypt = require('bcrypt');
-
+const bcrypt = require('bcryptjs');
 class User extends Sequelize.Model{
 
   static init(sequelize) {
@@ -119,6 +118,7 @@ class User extends Sequelize.Model{
       },
       {
         sequelize,
+        modelName: 'User',
         defaultScope: {
             where: {
               active: true,
@@ -138,16 +138,11 @@ class User extends Sequelize.Model{
   static associate(models) {
     // Define associations here if needed
 
-    // Each staff member is a user
-    this.hasOne(models.Staff, {
-      foreignKey: 'nationalId',
-      as: 'staff',
-    });
-
     // Each student can make many enrollments 
     this.hasMany(models.Enrollment, {
       foreignKey: 'nationalId',
       as: 'enrollments',
+      targetKey: 'nationalId', // Explicitly set the target key
     });
 
     // each staff member can issue a grade for an enrollment 

@@ -1,5 +1,3 @@
-// enrollment.js
-
 const { Sequelize, DataTypes } = require('sequelize');
 
 class Enrollment extends Sequelize.Model {
@@ -13,7 +11,6 @@ class Enrollment extends Sequelize.Model {
           allowNull: false,
         },
         // Add other attributes specific to the Enrollment model, if needed
-        
       },
       {
         sequelize,
@@ -23,26 +20,29 @@ class Enrollment extends Sequelize.Model {
   }
 
   static associate(models) {
-    // each student has many enrollments 
+    // Each enrollment belongs to a user
     this.belongsTo(models.User, {
-      foreignKey: 'nationalId',
+      foreignKey: 'nationalId', // Assuming this is the correct foreign key
       onDelete: 'CASCADE',
     });
-    // each course is enrolled many times
+
+    // Each enrollment belongs to a course
     this.belongsTo(models.Course, {
-      foreignKey: 'courseId',
+      foreignKey: 'courseId', // Assuming this is the correct foreign key
       onDelete: 'CASCADE',
     });
-    // each semster has many enrollments 
+
+    // Each enrollment belongs to a semester
     this.belongsTo(models.Semester, {
-      foreignKey: 'semesterId',
+      foreignKey: 'semesterId', // Assuming this is the correct foreign key
       onDelete: 'CASCADE',
     });
-    // each enrollment has one grade 
+
+    // Each enrollment has one grade
     this.hasOne(models.Grade, {
-        foreignKey: 'enrollmentId',
-        as: 'grade',
-      });
+      foreignKey: 'enrollmentId', // Assuming this is the correct foreign key
+      as: 'grade',
+    });
   }
 }
 
