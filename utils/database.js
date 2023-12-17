@@ -36,6 +36,7 @@ const Sequelize = require("sequelize");
 const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD } = process.env;
 const connectionString = `postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}/${PGDATABASE}?sslmode=require`;
 
-const sequelize = new Sequelize(connectionString);
+const sequelize = new Sequelize('postgresql://mohamed22311:C38PIkdivfFc@ep-blue-sound-40202522.il-central-1.aws.neon.tech/academIQ?sslmode=require');
+//const sequelize = new Sequelize(connectionString);
 
 module.exports = sequelize;

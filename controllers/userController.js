@@ -1,6 +1,7 @@
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const APIFeatures = require('./../utils/apiFeatures');
 
 // This function filters out the unwanted fileds that aren't allowd to be updated 
 const filterObj = (obj, ...allowedFields)=>{
@@ -10,43 +11,6 @@ const filterObj = (obj, ...allowedFields)=>{
     });
     return newObj;
 }
-
-// Return all active students 
-exports.getAllStudents = catchAsync (async (req,res,next)=>{
-    const students = await User.findAll({
-        where: {
-          role: 'student',
-        },
-        attributes: { exclude: ['role'] },
-    });
-
-    res.status(200).json({
-        status:'success',
-        results:students.length,
-        data:{
-            students
-        }
-    });
-});
-
-
-// Return All active staff members 
-exports.getAllStaff = catchAsync (async (req,res,next)=>{
-    const staffMembers = await User.findAll({
-      where: {
-        role: 'staff',
-      },
-      attributes: { exclude: ['role'] },
-    });
-
-    res.status(200).json({
-        status:'success',
-        results:staffMembers.length,
-        data:{
-            staffMembers
-        }
-    });
-});
 
 // The user update his data 
 exports.updateMe = catchAsync( async (req,res,next) =>{
@@ -94,6 +58,43 @@ exports.deleteMe = catchAsync(async (req,res,next)=>{
     res.status(204).json({
         status:'success',
         data:null
+    });
+});
+
+// Return all active students 
+exports.getAllStudents = catchAsync (async (req,res,next)=>{
+
+    const features = new APIFeatures(User, req.query);
+    // Additional conditions and attribute exclusions
+    features.query.where.role = 'student';
+    features.query.attributes.exclude = ['role'];
+
+    const students = await features.filter().sort().limitFields().paginate().get();
+
+    res.status(200).json({
+        status:'success',
+        results:students.length,
+        data:{
+            students
+        }
+    });
+});
+
+// Return All active staff members 
+exports.getAllStaff = catchAsync (async (req,res,next)=>{
+    const features = new APIFeatures(User, req.query);
+    // Additional conditions and attribute exclusions
+    features.query.where.role = 'staff';
+    features.query.attributes.exclude = ['role'];
+
+    const staffMembers = await features.filter().sort().limitFields().paginate().get();
+
+    res.status(200).json({
+        status:'success',
+        results:staffMembers.length,
+        data:{
+            staffMembers
+        }
     });
 });
 

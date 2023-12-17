@@ -10,26 +10,17 @@ process.on("uncaughtException", (err) => {
 dotenv.config({ path: "./config.env" });
 const app = require("./app");
 
-// const database = new Database();
-
-// // Correct order in the example
-// const User = require('./models/userModel');
-// const Enrollment = require('./models/enrollmentModel');
-// const Grade = require('./models/gradeModel');
-// const Course = require('./models/courseModel');
-// const Semester = require('./models/semesterModel');
-
-// async function startServer() {
-//     await database.authenticate();
-//     database.syncModels(User, Enrollment, Grade,Course,Semester);
-// }
-// startServer();
-
 const sequelize = require("./utils/database");
 const UserModel = require("./models/userModel");
+const EnrollmentModel = require('./models/enrollmentModel');
+const GradeModel = require('./models/gradeModel');
+const CourseModel = require('./models/courseModel');
+const SemesterModel = require('./models/semesterModel');
 
 sequelize
-  .sync({ alter: true })
+  .sync(
+    { alter: true }
+  )
   .then((results) => {
     console.log("DB connected");
   })

@@ -12,7 +12,7 @@ const globalErrorHandler = require('./controllers/errorController');
 
 
 //const tourRouter = require('./routes/tourRoutes');
-//const userRouter = require('./routes/userRoutes');
+const userRouter = require('./routes/userRoutes');
 
 
 const app = express();
@@ -37,7 +37,8 @@ const limiter = rateLimit({
 app.use('/api',limiter);
 
 // Body parser, reading data from the body into req.body and limit the data in the req.body to 10kb
-app.use(express.json({ limit: "10kb" }));
+//app.use(express.json({ limit: "10kb" }));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
 
@@ -60,8 +61,9 @@ app.use((req,res,next)=>{
 });
 
 // // ROUTES
+
 // app.use('/api/v1/tours',tourRouter);
-// app.use('/api/v1/users',userRouter);
+ app.use('/api/v1/users',userRouter);
     
 // Unhandled routes 
 app.all('*', (req,res,next)=>{

@@ -5,6 +5,7 @@ const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const sendEmail = require('./../utils/email');
+const Sequelize = require("sequelize");
 
 const signToken = id=>{
     return jwt.sign( {id}, process.env.JWT_SECRET, {
@@ -12,31 +13,51 @@ const signToken = id=>{
     });
 };
 
-const createSendToken = (user,statusCode,res)=>{
+const createSendToken = (user, statusCode, res) => {
+    if (!user) {
+        return res.status(500).json({
+            status: 'error',
+            message: 'User is undefined',
+        });
+    }
+
     const token = signToken(user.nationalId);
     const cookieOptions = {
         expires: new Date(
             Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
         ),
-        httpOnly: true
+        httpOnly: true,
     };
-    if(process.env.NODE_ENV === 'production')   cookieOptions.secure = true;
+
+    if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
     res.cookie('jwt', token, cookieOptions);
 
     // Remove the password from the output
+    // Check if user.password exists before setting it to undefined
     user.password = undefined;
+    user.passwordConfirm = undefined;
+    user.active= undefined;
+    user.updatedAt= undefined;
+    user.createdAt= undefined;
+    user.passwordChangedAt= undefined;
+    user.passwordResetToken= undefined;
+    user.passwordResetExpires= undefined;
+    if(!user.birthdate) user.birthdate = undefined;
+    if(!user.department) user.department = undefined;
+    if(!user.currentYear) user.currentYear = undefined;
 
     res.status(statusCode).json({
-        status:'success',
+        status: 'success',
         token,
-        data:{
-            user
-        }
+        data: {
+            user,
+        },
     });
-}
+};
 
 exports.signup = catchAsync( async(req,res,next)=>{
+    console.log(req.body.nationalId);
     const newUser = await User.create({
         nationalId: req.body.nationalId,
         firstName: req.body.firstName,
@@ -45,9 +66,10 @@ exports.signup = catchAsync( async(req,res,next)=>{
         lastName: req.body.lastName,
         email:req.body.email,
         phone: req.body.phone,
+        role:req.body.role,
         password:req.body.password,
         passwordConfirm:req.body.passwordConfirm,
-        role:req.body.role
+        
     });
 
     createSendToken(newUser,201,res);
@@ -146,9 +168,11 @@ exports.resetPassword = catchAsync( async (req,res,next) =>{
     const user = await User.findOne({
         where: {
           passwordResetToken: hashedToken,
-          passwordResetExpires: { [Sequelize.Op.gt]: Date.now() },
+          passwordResetExpires: {
+            [Sequelize.Op.gt]: Date.now(),
+          },
         },
-    });
+      });
 
     // 2 - if token isn't expired and there's a user, set new password
     if(!user){
