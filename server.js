@@ -12,11 +12,12 @@ const app = require("./app");
 
 const sequelize = require("./utils/database");
 const UserModel = require("./models/userModel");
-const EnrollmentModel = require('./models/enrollmentModel');
-const GradeModel = require('./models/gradeModel');
 const CourseModel = require('./models/courseModel');
 const SemesterModel = require('./models/semesterModel');
-
+const EnrollmentModel = require('./models/enrollmentModel');
+const GradeModel = require('./models/gradeModel');
+const CourseStatsModel = require('./models/courseStatisticsModel');
+const SemesterRankModel = require('./models/semesterRankModel');
 sequelize
   .sync(
     { alter: true }

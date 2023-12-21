@@ -34,6 +34,8 @@ const Course = sequelize.define(
   },
   {
     sequelize,
+    freezeTableName: true,
+    modelName: 'Course',
     hooks: {
       // Add hooks or additional logic as needed
     },
@@ -50,6 +52,12 @@ Course.associate = (models)=> {
       targetKey: 'courseCode', // Explicitly set the target key
   });
 
+  // Eahc course has many stats 
+  Course.hasMany(models.CourseStats, {
+    foreignKey: 'courseId',
+    as: 'courseStats',
+    targetKey: 'courseCode', // Explicitly set the target key
+  });
 };
 
 module.exports = Course;

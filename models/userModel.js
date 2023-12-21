@@ -128,6 +128,7 @@ const User = sequelize.define(
     },
   },
   {
+    freezeTableName: true,
     defaultScope: {
       where: {
         active: true,
@@ -159,6 +160,13 @@ User.associate = (models) => {
   User.hasMany(models.Enrollment, {
     foreignKey: 'nationalId',
     as: 'enrollments',
+    targetKey: 'nationalId', // Explicitly set the target key
+  });
+
+  // Each student has a rank in a semester 
+  User.hasMany(models.SemesterRank, {
+    foreignKey: 'nationalId',
+    as: 'semesterRanks',
     targetKey: 'nationalId', // Explicitly set the target key
   });
 

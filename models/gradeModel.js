@@ -50,23 +50,36 @@ const Grade = sequelize.define(
       type: DataTypes.DATE,
       allowNull: false,
     },
+    rank:{
+      type: DataTypes.INTEGER,
+      allowNull:true
+    },
+    enrollmentId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    staffId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    }
   },
   {
     sequelize,
+    freezeTableName: true,
     modelName: 'Grade',
   }
 ); 
 
 Grade.associate = (models)=> {
   // each grade is issued to one enrollment 
-  thGradeis.belongsTo(models.Enrollment, {
+  Grade.belongsTo(models.Enrollment, {
     foreignKey: 'enrollmentId',
     onDelete: 'CASCADE',
     as: 'enrollment',
   });
   // each grade is issued by one staff member
   Grade.belongsTo(models.User, {
-    foreignKey: 'nationalId',
+    foreignKey: 'staffId',
     onDelete: 'SET NULL',
     as: 'staff',
   });

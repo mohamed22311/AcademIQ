@@ -36,6 +36,7 @@ const Semester = sequelize.define(
   },
   {
     sequelize,
+    freezeTableName: true,
   }
 ); 
 
@@ -46,7 +47,19 @@ Semester.associate = (models)=> {
   Semester.hasMany(models.Enrollment, {
       foreignKey: 'semesterId',
       as: 'enrollments',
-    });
+  });
+
+  // each semester has many enrollment rank 
+  Semester.hasMany(models.SemesterRank, {
+    foreignKey: 'semesterId',
+    as: 'semesterRanks',
+  });
+
+  // each semester has many grade stats
+  Semester.hasMany(models.CourseStats, {
+    foreignKey: 'semesterId',
+    as: 'courseGradeStats',
+  });
 
 }
 

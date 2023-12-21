@@ -61,51 +61,50 @@ exports.deleteMe = catchAsync(async (req,res,next)=>{
     });
 });
 
-// Return all active students 
-exports.getAllStudents = catchAsync (async (req,res,next)=>{
-
-    const features = new APIFeatures(User, req.query);
-    // Additional conditions and attribute exclusions
-    features.query.where.role = 'student';
-    features.query.attributes.exclude = ['role'];
-
-    const students = await features.filter().sort().limitFields().paginate().get();
-
+exports.getAllUsers= catchAsync(async (req, res, next) => {
+    const features = new APIFeatures(req.query);
+    // // Additional conditions and attribute exclusions
+    // features.query.where = {
+    //     role: 'student',
+    // };
+    // features.query.attributes= {
+    //     exclude: ['role'],
+    // };
+    //console.log(features.query);
+    console.log(req.query);
+    const students = await User.findAll(features.query);
+    
     res.status(200).json({
-        status:'success',
-        results:students.length,
-        data:{
-            students
-        }
+      status: 'success',
+      results: students.length,
+      data: {
+        students,
+      },
     });
-});
+  });
 
-// Return All active staff members 
-exports.getAllStaff = catchAsync (async (req,res,next)=>{
-    const features = new APIFeatures(User, req.query);
-    // Additional conditions and attribute exclusions
-    features.query.where.role = 'staff';
-    features.query.attributes.exclude = ['role'];
 
-    const staffMembers = await features.filter().sort().limitFields().paginate().get();
-
-    res.status(200).json({
-        status:'success',
-        results:staffMembers.length,
-        data:{
-            staffMembers
-        }
-    });
-});
 
 // Admin or Staff search for a specific student 
-exports.getUser = catchAsync(async (req,res,next)=>{
 
-    res.status(500).json({
-        status : 'error',
-        message : 'This route is not yet defined'
-    });
+exports.getUser = catchAsync(async (req, res, next) => {
+
+  const { userId } = req.params; // Assuming the user ID is in the request parameters
+  const user = await User.findByPk(userId);
+
+  if (!user) {
+    return next(new AppError('User not fount',404));
+  }
+  
+  // Return the user data
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  });
 });
+
 
 // The admin creates a user profile 
 exports.createUser = catchAsync(async (req,res,next)=>{

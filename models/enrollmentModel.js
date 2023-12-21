@@ -10,14 +10,28 @@ const Enrollment = sequelize.define(
       autoIncrement: true,
       allowNull: false,
     },
+    nationalId: {
+      type: DataTypes.STRING, // Change the data type based on your actual User model
+      allowNull: false,
+    },
+    courseId: {
+      type: DataTypes.INTEGER, // Change the data type based on your actual Course model
+      allowNull: false,
+    },
+    semesterId: {
+      type: DataTypes.INTEGER, // Change the data type based on your actual Semester model
+      allowNull: false,
+    },
   },
   {
     sequelize,
+    freezeTableName: true,
     modelName: 'Enrollment',
   }
 ); 
 
 Enrollment.associate = (models)=> {
+
   // Each enrollment belongs to a user
   Enrollment.belongsTo(models.User, {
     foreignKey: 'nationalId', // Assuming this is the correct foreign key
