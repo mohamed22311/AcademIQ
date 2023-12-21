@@ -11,7 +11,10 @@ const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 
 
-//const tourRouter = require('./routes/tourRoutes');
+const courseRouter = require('./routes/courseRoutes');
+const semesterRouter = require('./routes/semesterRoutes');
+const enrollmentRoutes = require('./routes/enrollmentRoutes');
+const gradeRoutes = require('./routes/gradeRoutes');
 const userRouter = require('./routes/userRoutes');
 
 
@@ -36,8 +39,7 @@ const limiter = rateLimit({
 });
 app.use('/api',limiter);
 
-// Body parser, reading data from the body into req.body and limit the data in the req.body to 10kb
-//app.use(express.json({ limit: "10kb" }));
+// Body parser, reading data from the body into req.body and limit the data in the req.body to 10kbapp.use(express.json({ limit: "10kb" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
@@ -62,7 +64,10 @@ app.use((req,res,next)=>{
 
 // // ROUTES
 
-// app.use('/api/v1/tours',tourRouter);
+ app.use('/api/v1/course',courseRouter);
+ app.use('/api/v1/semester',semesterRouter);
+ app.use('/api/v1/enrollment',enrollmentRoutes);
+ app.use('/api/v1/grade',gradeRoutes);
  app.use('/api/v1/users',userRouter);
     
 // Unhandled routes 

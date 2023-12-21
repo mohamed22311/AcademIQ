@@ -61,6 +61,7 @@ exports.deleteMe = catchAsync(async (req,res,next)=>{
     });
 });
 
+// Get all the users 
 exports.getAllUsers= catchAsync(async (req, res, next) => {
     const features = new APIFeatures(req.query);
     // // Additional conditions and attribute exclusions
@@ -81,22 +82,18 @@ exports.getAllUsers= catchAsync(async (req, res, next) => {
         students,
       },
     });
-  });
-
-
+});
 
 // Admin or Staff search for a specific student 
-
 exports.getUser = catchAsync(async (req, res, next) => {
 
-  const { userId } = req.params; // Assuming the user ID is in the request parameters
-  const user = await User.findByPk(userId);
+  const { id } = req.params; // Assuming the user ID is in the request parameters
+  const user = await User.findByPk(id);
 
   if (!user) {
     return next(new AppError('User not fount',404));
   }
   
-  // Return the user data
   res.status(200).json({
     status: 'success',
     data: {
@@ -105,29 +102,47 @@ exports.getUser = catchAsync(async (req, res, next) => {
   });
 });
 
-
 // The admin creates a user profile 
 exports.createUser = catchAsync(async (req,res,next)=>{
-    res.status(500).json({
-        status : 'error',
-        message : 'This route is not yet defined'
+    const newUser = await User.create(req.body);
+    if(!newUser){
+        return next(new AppError('User is not created, something went wrong',401));
+    }
+
+    res.status(201).json({
+        status : 'success',
+        newUser
     });
 });
-
 
 // The admin updates some user data 
 exports.updateUser = catchAsync(async (req,res,next)=>{
-    res.status(500).json({
-        status : 'error',
-        message : 'This route is not yet defined'
+    const userId = req.params.id;
+    const { firstName, lastName, email } = req.body;
+    const existingUser = await User.findByPk(userId);
+    if(!existingUser){
+        return next(new AppError('User not fount',404));
+    }
+    
+    const updatedUser = await existingUser.update(req.body);
+
+    res.status(200).json({
+        status : 'succesful',
+        updatedUser
     });
 });
 
-
 // The admin deletes some user 
 exports.deleteUser = catchAsync(async (req,res,next)=>{
-    res.status(500).json({
-        status : 'error',
-        message : 'This route is not yet defined'
+    const userId = req.params.id;
+    const existingUser = await User.findByPk(userId);
+    if(!existingUser){
+        return next(new AppError('User not fount',404));
+    }
+    
+    await existingUser.destroy();
+
+    res.status(200).json({
+        status : 'succesful',
     });
 });
